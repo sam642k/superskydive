@@ -1,0 +1,170 @@
+ {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Search</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="superskydive template project">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="{% static 'styles/bootstrap4/bootstrap.min.css' %}">
+        <link href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.theme.default.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/animate.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'styles/booking.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'styles/booking_responsive.css' %}">
+        <script type="text/javascript" src="{% static 'styles/bookings.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'styles/bookings_style.css' %}">
+</head>
+<body>
+
+
+
+	<!-- Header -->
+
+	<header class="header">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="header_content d-flex flex-row align-items-center justify-content-start">
+						<div class="header_content_inner d-flex flex-row align-items-end justify-content-start">
+							<div class="logo"><a href="">Super SkyDive</a></div>
+							<nav class="main_nav">
+								<ul class="d-flex flex-row align-items-start justify-content-start">
+									<li><a href="{% url 'skydive:index' %}">Home</a></li>
+									<li><a href="{% url 'skydive:about' %}">About Us</a></li>
+									<li class="active"><a href="{% url 'skydive:mybookings' %}">My Bookings</a></li>
+									<li><a href="{% url 'skydive:login' %}">Join Us</a></li>
+
+									{% if user.is_authenticated %}
+										<li><a href="{% url 'skydive:logout' %}">Logout</a></li>
+									{% else %}
+										<li><a href="{% url 'skydive:register' %}">Register</a></li>
+										<li><a href="{% url 'skydive:login' %}">Login</a></li>
+									{% endif %}
+								</ul>
+							</nav>
+							{% if user.is_authenticated %}
+								<div class="header_phone ml-auto">Welcome, {{user.username }}</div>
+							{% else %}
+								<div class="header_phone ml-auto">
+									<a style="color: white; font-size:xx-large;" href="https://www.instagram.com/skydiving_gear_canada/?igshid=YmMyMTA2M2Y%3D" target="_blank">
+										<i class="fa fa-instagram" aria-hidden="false"></i>
+									</a>
+								</div>
+							{% endif %}
+
+							<!-- Hamburger -->
+
+							<div class="hamburger ml-auto">
+								<i class="fa fa-bars" aria-hidden="true"></i>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</header>
+
+ <section class="section section1">
+        <div class="container">
+            {% if booking_list %}
+                {% for booking in booking_list %}
+                    <div class="row each-booking-div" id="{{booking.booking_id}}">
+                        <div class="col-2" style="display: flex;">
+                            <div style="display: flex; color: #666666; margin-top: auto;">
+                                <div>
+                                    <span style="font-size: 2.1em;">{{booking.booking_date | date:"d"}}</span>
+                                </div>
+                                <div style="font-size: smaller; display: flex; margin: auto 0; padding-left: 5px; line-height: 1em;">
+                                    <div style="margin: auto;">
+                                        <div style="margin-bottom: 1px;">{{booking.booking_date | date:"D"}}</div>
+                                        <div style="margin-top: 1px;">{{booking.booking_date | date:"M'y"}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4 middle-div">
+                            <div style="width:100%">
+                                <div class="row places-div" style=" display: flex;">
+                                    <div style="max-width: 45%;">{{booking.destination_desc.province}}</div>
+                                    <div>&nbsp;-&nbsp;</div>
+                                    <div style="max-width: 45%;">{{booking.destination_desc.type_skydive}}</div>
+                                </div>
+                                <div class="row places-div" style="font-size: .8em; color: #999999; ">
+                                    <div style="max-width: 100%;">{{booking.passengers.count}} Diver</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2 middle-div">
+                            <div style="font-size: 1.2em; color: #945937;">{{booking.booking_id}}</div>
+                        </div>
+                        <div class="col-2 middle-div">
+                            <div>
+                                <div class="row status-div">
+                                    {% if booking.status == 'confirmed' %}
+                                        <div class="green">{{booking.status | upper}}</div>
+                                    {% endif %}
+                                    {% if booking.status == 'PENDING' %}
+                                        <div class="orange">{{booking.status}}</div>
+                                    {% endif %}
+                                    {% if booking.status == 'cancelled' %}
+                                        <div class="red">{{booking.status | upper}}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="row booking-date-div" style="font-size: 1.7em; color: #666;">
+                                    {% if booking.status == 'CONFIRMED' %}
+                                        Booked on: {{ booking.booking_date }}
+                                    {% endif %}
+                                    {% if booking.status == 'PENDING' %}
+                                        Reviewed on: {{booking.booking_date | date:"D, M d Y"}}
+                                    {% endif %}
+                                    {% if booking.status == 'CANCELLED' %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    <div class="col-2 last-div">
+                        <div class="ticket-action-div">
+                        <button class="btn btn-outline-danger btnp cbtn"  data-ref="{{booking.booking_id}}" onclick="popup(this)">Cancel</button>
+                        </div>
+                    </div>
+
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="height: 100%; width:100%; padding: 10%;">
+                    <div style="text-align: center; margin: 100px;">
+                        <svg width="4em" height="4em" viewBox="0 0 16 16" class="bi bi-exclamation-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                        <br><br>
+                        <h3>Oops! Looks empty</h3>
+                        <p>
+                            Looks like You don't have any bookings yet.
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+     <div class="popup">
+        <div class="small-popup">
+            <div style="margin-bottom: 10px; font-size: 1.1em;"><strong>Do you really want to cancel this ticket?</strong></div>
+            <div class="popup-actions">
+                <button class="btn btn-light" onclick="remove_popup()">Go Back</button>
+                <button class="btn btn-danger" id="cancel_ticket_btn" data-ref="" onclick="cancel_tkt()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

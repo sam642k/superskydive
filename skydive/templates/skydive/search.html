@@ -1,0 +1,183 @@
+    {% load static %}
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <title>Search</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="superskydive template project">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="{% static 'styles/custom.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'styles/bootstrap4/bootstrap.min.css' %}">
+        <link href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.theme.default.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/animate.css' %}">
+
+        <link rel="stylesheet" type="text/css" href="{% static 'styles/main_styles.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'styles/search.css' %}">
+
+    </head>
+    <body>
+<header class="header">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="header_content d-flex flex-row align-items-center justify-content-start">
+						<div class="header_content_inner d-flex flex-row align-items-end justify-content-start">
+							<div class="logo"><a href="">Super SkyDive</a></div>
+							<nav class="main_nav">
+								<ul class="d-flex flex-row align-items-start justify-content-start">
+									<li class="active"><a href="">Home</a></li>
+									<li><a href="{%url 'skydive:about'  %}">About Us</a></li>
+									<li><a href="{%url 'skydive:mybookings'  %}">My Bookings</a></li>
+									<li><a href="{%url 'skydive:joinus'  %}">Join Us</a></li>
+
+									{% if user.is_authenticated %}
+										<li><a href="{%url 'skydive:logout'  %}">Logout</a></li>
+									{% else %}
+										<li><a href="{%url 'skydive:register'  %}">Register</a></li>
+										<li><a href="{%url 'skydive:login'  %}">Login</a></li>
+									{% endif %}
+								</ul>
+							</nav>
+							{% if user.is_authenticated %}
+								<div class="header_phone ml-auto">Welcome, {{user.username }}</div>
+							{% else %}
+								<div class="header_phone ml-auto">
+									<a style="color: white; font-size:xx-large;" href="https://www.instagram.com/skydiving_gear_canada/?igshid=YmMyMTA2M2Y%3D" target="_blank">
+										<i class="fa fa-instagram" aria-hidden="false"></i>
+									</a>
+								</div>
+							{% endif %}
+
+							<!-- Hamburger -->
+
+							<div class="hamburger ml-auto">
+								<i class="fa fa-bars" aria-hidden="true"></i>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</header>
+<div style="margin-top: 115px">
+     <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom">
+        <a class="navbar-brand ml-2 font-weight-bold" href="#">Count {{ loc_desc_list.count }} </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor" aria-controls="navbarColor" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarColor" style="padding-right: 280px" >
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{% url 'skydive:type_skydive' 'tandemskydive' 1 %}">Tandem SkyDive</a> </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'skydive:type_skydive' 'learnskydive' 2 %}">Learn SkyDive</a> </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'skydive:type_skydive' 'licenseskydive' 3 %}">License SkyDive</a> </li>
+            </ul>
+        </div>
+
+    </nav>
+</div>
+
+
+    <section id="sidebar">
+
+        <div>
+            <h6 class="p-1 border-bottom" style="font-size: 20px;font-weight: bold">Location</h6>
+            {% for loc in loc_list %}
+            <ul>
+                <li><a href="{% url 'skydive:search_loc' loc.province %}">{{ loc.province }}</a></li>
+            </ul>
+            {% endfor %}
+        </div>
+        <div>
+            <h6 style="font-size: 20px;font-weight: bold;padding-top: 30px">Price Type</h6>
+            <form action="{% url 'skydive:search' %}" class="ml-md-2" method="GET">
+                <select name="price" class="form-control" style="width: 85%" onchange="this.form.submit()" >
+                    <option value="1">None</option>
+                    <option value="2">$0 - $1000</option>
+                    <option value="3">$1000 - $2000</option>
+                    <option value="4">$2000+</option>
+               </select>
+            </form>
+        </div>
+    </section>
+    <div id="products">
+    <div class="container mt-5">
+        {% for loc_desc in loc_desc_list %}
+
+          <div class="card mt-4" style="margin-bottom: 50px">
+               <div class="row">
+                     <div class="col-md-4">
+                         <!--Card image-->
+                          <img src={{ loc_desc.img_destin.url }} class="card-img-top">
+                     </div>
+                     <div class="col-md-8">
+                        <div class="card-body" style="padding-left: 105px">
+                            <h3 class="card-title mt-3"> {{ loc_desc.province }}</h3>
+                            <p>{{ loc_desc.desc }} </p>
+
+
+                            <p><b>{{ loc_desc.curr| upper }} {{ loc_desc.price }}</b></p>
+                            <a href="{% url 'skydive:booking' loc_desc.dest_id %}"><button class="btn btn-success">Book Now</button></a>
+                         {% for avail in available_list %}
+                            {% if search_item == 'province' %}
+                            <div class="row">
+                            {% if loc_desc.type_skydive == avail.type_skydive %}
+                                 <div class="col-4">
+                                     <p>{{ avail.date_available }} </p>
+                                 </div>
+                                <div class="col-3">
+                                     <p>{{ avail.spots_free }} spots </p>
+                                </div>
+                                {% if avail.spots_free > 0 %}
+                                    <div class="col-3">
+                                           <p> Available</p>
+                                    </div>
+
+                                 {% else %}
+                                    <div class="col-3">
+                                     <p> No spots available</p>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            </div>
+
+                        {% elif search_item == 'type_skydive' %}
+                           <div class="row">
+                            {% if loc_desc.type_skydive == avail.type_skydive and loc_desc.province == avail.destination.province %}
+                                <div class="col-4">
+                                     <p>{{ avail.date_available }} </p>
+                                 </div>
+                                <div class="col-3">
+                                     <p>{{ avail.spots_free }} spots </p>
+                                </div>
+                                {% if avail.spots_free > 0 %}
+                                    <div class="col-3">
+                                           <p> Available</p>
+                                    </div>
+
+                                 {% else %}
+                                    <div class="col-3">
+                                     <p> No spots available</p>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                           </div>
+                        {% endif %}
+                        {% endfor %}
+                        </div>
+
+                     </div>
+            </div>
+        </div>
+        {% endfor %}
+       </div>
+    </div>
+    </div>
+    </section>
+    </body>
+    </html>

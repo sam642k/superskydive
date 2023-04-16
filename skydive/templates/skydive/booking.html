@@ -1,0 +1,135 @@
+ {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <title>Search</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="superskydive template project">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="{% static 'styles/bootstrap4/bootstrap.min.css' %}">
+        <link href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.theme.default.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/animate.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'styles/main_styles.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'styles/booking_responsive.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/booking.css' %}">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+     let form_num = 0;
+     $(document).ready(function() {
+       $("#add").click(function() {
+       form_num ++;
+       $("input[id='id_form-TOTAL_FORMS']").attr('value', form_num + 1);
+          $("form").append("<br/><label for='id_form-" + form_num + "-first_name'>First name:</label> <input id='id_form-" + form_num + "-first_name' type='text' value='' name='form-" + form_num + "-first_name'/> <label for='id_form-" + form_num + "-last_name'>Last name:</label> <input id='id_form-" + form_num + "-last_name' type='text' value='' name='form-" + form_num + "-last_name'/> <label for='id_form-" + form_num + "-age'>Age:</label> <input id='id_form-" + form_num + "-age' type='number' step='1' value='' name='form-" + form_num + "-age'/><br/>");
+       });
+
+     });
+  </script>
+</head>
+<body>
+
+<div class="super_container">
+
+	<!-- Header -->
+
+	<header class="header">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="header_content d-flex flex-row align-items-center justify-content-start">
+						<div class="header_content_inner d-flex flex-row align-items-end justify-content-start">
+							<div class="logo"><a href="">Super SkyDive</a></div>
+							<nav class="main_nav">
+								<ul class="d-flex flex-row align-items-start justify-content-start">
+									<li><a href="">Home</a></li>
+									<li><a href="{%url 'skydive:about'  %}">About Us</a></li>
+									<li><a href="{%url 'skydive:mybookings'  %}">My Bookings</a></li>
+									<li><a href="{%url 'skydive:joinus'  %}">Join Us</a></li>
+
+									{% if user.is_authenticated %}
+										<li><a href="{%url 'skydive:logout'  %}">Logout</a></li>
+									{% else %}
+										<li><a href="{%url 'skydive:register'  %}">Register</a></li>
+										<li><a href="{%url 'skydive:login'  %}">Login</a></li>
+									{% endif %}
+								</ul>
+							</nav>
+							{% if user.is_authenticated %}
+								<div class="header_phone ml-auto">Welcome, {{user.username }}</div>
+							{% else %}
+								<div class="header_phone ml-auto">
+									<a style="color: white; font-size:xx-large;" href="https://www.instagram.com/skydiving_gear_canada/?igshid=YmMyMTA2M2Y%3D" target="_blank">
+										<i class="fa fa-instagram" aria-hidden="false"></i>
+									</a>
+								</div>
+							{% endif %}
+
+							<!-- Hamburger -->
+
+							<div class="hamburger ml-auto">
+								<i class="fa fa-bars" aria-hidden="true"></i>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</header>
+
+
+ <form action="{% url 'skydive:payment' dest_id %}" method="POST">
+     <div>
+  {% csrf_token %}
+  {{ formset }}
+  <label for="booking_date">Booking Date:</label>
+  <input type="date" id="booking_date" name="booking_date" class="date" onchange="DateCheck()" >
+  </br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="button" value="Submit">
+     </div>
+ </form>
+</br>
+</br>
+</br>
+  <a href="#"><button id="add" type="submit" class="btn btn-success">Add New Row</button></a>
+
+
+</div>
+
+
+
+
+<script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'styles/bootstrap4/popper.js' %}"></script>
+<script src="{% static 'styles/bootstrap4/bootstrap.min.js' %}"></script>
+<script src="{% static 'plugins/greensock/TweenMax.min.js' %}"></script>
+<script src="{% static 'plugins/greensock/TimelineMax.min.js' %}"></script>
+<script src="{% static 'plugins/scrollmagic/ScrollMagic.min.js' %}"></script>
+<script src="{% static 'plugins/greensock/animation.gsap.min.js' %}"></script>
+<script src="{% static 'plugins/greensock/ScrollToPlugin.min.js' %}"></script>
+<script src="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.js' %}"></script>
+<script src="{% static 'plugins/easing/easing.js' %}"></script>
+<script src="{% static 'plugins/parallax-js-master/parallax.min.js' %}"></script>
+<script src="{% static 'js/about.js' %}"></script>
+
+
+
+<script>
+    function DateCheck() {
+    let UserDate = document.getElementById("booking_date").value;
+    let ToDate = new Date();
+
+    if (new Date(UserDate).getTime() <= ToDate.getTime()) {
+          alert("The Date must be Greater then today's date");
+          return false;
+     }
+    return true;
+}
+</script>
+</body>
+</html>
